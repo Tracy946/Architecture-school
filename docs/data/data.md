@@ -7,90 +7,166 @@
 
 ```plantuml
 @startuml
-' Логическая модель данных в варианте UML Class Diagram (альтернатива ER-диаграмме).
-namespace ShoppingCart {
+namespace ConferenceInformation {
 
- class ShoppingCart
+ 
+ class Conference
  {
   id : string
-  createDate : datetime
-  updateDate : datetime
-  customer : Customer
-  price : ShoppingCartPrice
-  cartItems : CartItem[]
+  name : string
+  date : datetime
+  place : string
+  stream : string
+  chatId : string
+  managerId : string
  }
 
- class ShoppingCartPrice
+ class ConferenceSchedule
  {
-  type : CartItemPrice
- }
- class CartItemPrice
- {
-  type : CartItemPriceType
+  confId : string
+  time : time
+  reportId : string
  }
 
- enum CartPriceType
+ class ConferenceMember
  {
-  total
-  grandTotal
-  offeringDiscount
-  couponsDiscount
+  confId : string
+  userId : string
  }
 
- class CartItem
+ class ConferenceFeedback
  {
   id : string
-  quantity : int
-  offering : Offering
-  relationship : CartItemRelationShip[]
-  price : CartItemPrice[]
-  status : CartItemStatus
+  confId : string
+  userId : string
+  questionId : string
+  score : integer
  }
 
-  class Customer
+ class FeedbackQuestion
  {
   id : string
+  question : string
+ }
+
+
+ Conference *-- "1" ConferenceSchedule
+ ConferenceMember "*"--"*" Conference
+ ConferenceFeedback "*"--"*" FeedbackQuestion
+ Conference *-- "*" ConferenceFeedback
+
+}
+
+ ConferenceInformation.ConferenceMember "*"--"*" Users.User
+
+
+namespace Users{
+class User
+ {
+  id : string
+  firstName : string
+  middleName : string
+  lastName : string
+  phone : string
+  email : string
+  role : RoleType
+ }
+
+ enum RoleType
+ {
+  speaker
+  participant
+  reviewer
+  manager
+  operator
+  support
+ }
+ User -- RoleType
+
+}
+
+namespace Reports {
+ class Report
+ {
+  id : string
+  speakerId : string
+  name : string
+  content : string
+  conferenceId : string
+ }
+
+  class ReportReview
+ {
+  reportId : string
+  reviewerId : string
+  status : ReportStatus
+  chatId : string
  }
  
- class Offering
+ enum ReportStatus
+ {
+  sentForReview
+  inReview
+  needsImprovement
+  accepted
+  rejected
+ }
+ ReportReview -- ReportStatus
+ Report *--"1" ReportReview
+ Reports.Report "*"--* ConferenceInformation.ConferenceSchedule
+
+}
+
+
+namespace Communication {
+  class Chat
  {
   id : string
-  isQuantifiable : boolean
-  actionType : OfferingActionType
-  validFor : ValidFor
+  type : ChatType
  }
-  
- class ProductSpecificationRef
+
+ enum ChatType
+ {
+  report
+  translation
+  support
+  manager
+ }
+
+  class Message
  {
   id : string
+  body : string
+  reportId : string
+  recipientId : string
+  senderId : string
+  chatId : string
+  status : MessageSatus
  }
- 
- ShoppingCart *-- "1..*" ShoppingCartPrice
- ShoppingCartPrice -- CartPriceType
- ShoppingCart *-- "*" CartItem
- CartItem *-- "*" CartItemPrice
- CartItemPrice -- CartPriceType
- CartItem *-- "1" Offering
- Offering *-- "1" ProductSpecificationRef
- Offering *-- "0..1" ProductConfiguration
- ShoppingCart *-- "1" Customer
-}
 
-namespace Ordering {
- ProductOrder *-- OrderItem
- OrderItem *-- Product
- Product *-- ProductSpecificationRef
- ProductOrder *-- Party
-}
+ enum MessageStatus
+ {
+  sent
+  isRead
+  notRead
+  failed
+ }
 
-namespace ProductCatalog {
- ShoppingCart.ProductSpecificationRef ..> ProductSpecification : ref
- Ordering.ProductSpecificationRef ..> ProductSpecification : ref
-}
+  class ChatRef
+ {
+  userId : string
+  chatId : string
+ }
 
-namespace CX {
- ShoppingCart.Customer ..> Customer : ref
- Ordering.Party ..> Customer : ref
+ Chat -- ChatType
+ Chat "1"--"*" Message
+ Users.User "*"--"*" Chat
+ Users.User "1"--"*" Message
+ Reports.Report "1"--"1" Message
+ Users.User "*"--"*" ChatRef
+ Chat "*"--"*" ChatRef
+ Message -- MessageStatus
+
 }
 @enduml
 ```
