@@ -74,6 +74,7 @@ class User
 
  enum RoleType
  {
+  user
   speaker
   participant
   reviewer
