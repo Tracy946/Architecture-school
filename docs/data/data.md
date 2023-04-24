@@ -32,7 +32,22 @@ namespace ConferenceInformation {
  {
   confId : string
   userId : string
+  userRole : RoleType
+  reportUploaded : boolean
  }
+
+ enum RoleType
+ {
+  user
+  speaker
+  participant
+  reviewer
+  manager
+  operator
+  support
+ }
+ ConferenceMember -- RoleType
+ 
 
  class ConferenceFeedback
  {
@@ -69,21 +84,7 @@ class User
   lastName : string
   phone : string
   email : string
-  role : RoleType
  }
-
- enum RoleType
- {
-  user
-  speaker
-  participant
-  reviewer
-  manager
-  operator
-  support
- }
- User -- RoleType
-
 }
 
 namespace Reports {
@@ -129,7 +130,6 @@ namespace Communication {
  enum ChatType
  {
   report
-  translation
   support
   manager
  }
