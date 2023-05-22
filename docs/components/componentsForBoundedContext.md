@@ -10,8 +10,10 @@ AddElementTag("storage", $shape=RoundedBoxShape(), $bgColor="lightSkyBlue", $fon
 Person(customer, "Пользователь")
 
 System_Boundary(c, "MTS Hello, Conference!") {
+
+   System_Boundary(bfe, "Frontend") {
    Container(app, "Клиентское веб-приложение", "html, JavaScript, Angular", "Сайт конференции")
-   Container(bff_service, "Backend-For-Frontend", "Java, Spring Boot", "Сервис работы с backend", $tags = "microService") 
+   }
 
    System_Boundary(brs, "Report Service") {
    Container(report_service, "Report Service", "Java, Spring Boot", "Сервис работы с докладами", $tags = "microService")      
@@ -19,6 +21,7 @@ System_Boundary(c, "MTS Hello, Conference!") {
    }
 
    System_Boundary(bcs, "Conference Service") {
+   Container(bff_service, "Backend-For-Frontend", "Java, Spring Boot", "Сервис работы с backend", $tags = "microService") 
    Container(conference_service, "Conference Service", "Java, Spring Boot", "Сервис работы с конференциями", $tags = "microService")      
    ContainerDb(conference_db, "ConferenceInformation", "PostgreSQL", "Хранение данных о конференциях", $tags = "storage")
    }
